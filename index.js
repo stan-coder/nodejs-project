@@ -2,5 +2,5 @@
 
 global.rootDir = require('path').resolve(__dirname);;
 
-let router = require('./app/router');
-require('./app/server').call(null, router);
+let router = require(`${rootDir}/app/router`);
+require(`${rootDir}/app/server`)(router);

@@ -2,7 +2,7 @@
 
 function serverStart(router) {
 	function serverHandler() {
-		router.init(...arguments);
+		(new router(...arguments)).init();
 	}
 	require('http').createServer(serverHandler).listen(3333);
 }

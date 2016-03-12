@@ -1,49 +1,89 @@
 'use strict';
 
-/**
- * Prevent to answer on favicon.ico queries
- */
-function stopFavicon(url, res) {
-	if (url === 'favicon.ico') {
-		res.writeHead(200, {"Content-Type": "image/x-icon"});
-		res.end();
-		return true;
-	}
-}
+class Router {
 
-/**
- * Show "Page not found"
- */
-function showPage404(res) {
-	res.writeHead(200, {"Content-Type": "text/plain"});
-	res.end("Page not found");
-}
-
-/**
- * Initilize router module
- */
-function init(req, res) {
-	var url = require('url').parse(req.url).path.substr(1);
-
-	if (stopFavicon(url, res)) {
-		return;
+	/**
+	 * Start router class
+	 */
+	constructor(req, res) {
+		this.req = req;
+		this.res = res;
+		this.cotrollersPath = `${rootDir}/mvc/controllers/`;
+		this.routeListPath = `${rootDir}/config/route.json`;
 	}
 
-	function loadlist(err, data) {
-		let list = JSON.parse(data);
+	/**
+	 * Prevent to answer on favicon.ico queries
+	 */
+	isFavicon() {
+		if (this.url === 'favicon.ico') {
+			this.res.writeHead(200, {"Content-Type": "image/x-icon"});
+			this.res.end();
+			return true;
+		}
+	}
 
-		if (typeof list[url] === "undefined") {
-			showPage404()
+	/**
+	 * Show "Page not found"
+	 */
+	showPage404() {
+		this.res.writeHead(200, {"Content-Type": "text/plain"});
+		this.res.end("Page not found");
+	}
+
+	/**
+	 * Response css, js files
+	 */
+	isExternalFile() {
+		
+		if (this.url.indexOf('/src/') === 0) {
+			let extension = this.url.substr(this.url.lastIndexOf('.') + 1, this.url.length);
+			
+			if (['css', 'js'].indexOf(extension) > -1) {
+
+				let fileName = this.url.substr(this.url.lastIndexOf('/') + 1);
+				require('fs').readFile(`${rootDir}/src/${fileName}`, 'utf8', (err, data) => {
+
+					let type = {css: "css", js: "javascript"};
+					this.res.writeHead(200, {'Content-Type': 'text/' + type[extension]});
+					this.res.end(data);
+				});
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Initilize router module
+	 */
+	init() {
+		this.url = require('url').parse(this.req.url).path;
+
+		if (this.isFavicon() || this.isExternalFile()) {
 			return;
 		}
 
-		let controller = require('./controllers/' + list[url][0]);
-		let instance = new controller(res);
-		instance[list[url][1]]();
-	}
+		let loadlist = (err, data) => {
+			let list = JSON.parse(data);
 
-	require('fs').readFile(rootDir + '/config/route.json', 'utf8', loadlist);
+			if (typeof list[this.url] === "undefined") {
+				this.showPage404(this.res);
+				return;
+			}
+
+			/**
+			 * Init controller and run action
+			 */
+			let controller = require(this.cotrollersPath + list[this.url][0]);
+			let instance = new controller(this.res);
+
+			let action = list[this.url][1];
+			instance.view = action;
+			instance[action]();
+		}
+
+		require('fs').readFile(this.routeListPath, 'utf8', loadlist);
+	}
 }
 
-
-module.exports.init = init;
+module.exports = Router;
