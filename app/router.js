@@ -43,6 +43,10 @@ class Router {
 
 				let fileName = this.url.substr(this.url.lastIndexOf('/') + 1);
 				require('fs').readFile(`${rootDir}/src/${fileName}`, 'utf8', (err, data) => {
+					if (err) {
+						this.showPage404();
+						return;
+					}
 
 					let type = {css: "css", js: "javascript"};
 					this.res.writeHead(200, {'Content-Type': 'text/' + type[extension]});
@@ -64,6 +68,8 @@ class Router {
 		}
 
 		let loadlist = (err, data) => {
+			if (errorHandler(err)) return;
+
 			let list = JSON.parse(data);
 
 			if (typeof list[this.url] === "undefined") {
@@ -75,10 +81,11 @@ class Router {
 			 * Init controller and run action
 			 */
 			let controller = require(this.cotrollersPath + list[this.url][0]);
-			let instance = new controller(this.res);
+			let instance = new controller();
 
 			let action = list[this.url][1];
 			instance.view = action;
+			instance.res = this.res;
 			instance[action]();
 		}
 

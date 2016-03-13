@@ -1,6 +1,8 @@
 'use strict';
 
-global.rootDir = require('path').resolve(__dirname);;
+global.rootDir = require('path').resolve(__dirname);
 
-let router = require(`${rootDir}/app/router`);
-require(`${rootDir}/app/server`)(router);
+let settingsPath = `${rootDir}/config/settings.json`;
+let incPath = `${rootDir}/app/inc.js`;
+
+require('fs').readFile(settingsPath, 'utf8', require(incPath).loadSettings);

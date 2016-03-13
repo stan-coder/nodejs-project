@@ -7,16 +7,17 @@ module.exports = class User extends require(`${rootDir}/app/baseController`) {
 	 */
 	constructor() {
 		super();
-		this.res = arguments[0];
 	}
 
 	/**
 	 * Listing users
 	 */
 	list() {
-		var model = require('../models/user');
+		var UserModel = new require('../models/user');
+		var model = new UserModel();
+		
 		model.getList((data) => {
-			
+
 			this.title = 'My best title';
 			this.data = {items: ['apple11', 'orange', 'banana']};
 			this.property = data.property;
