@@ -12,22 +12,30 @@ module.exports = class BaseController {
 	/**
 	 * Method engages with habdlebars templating
 	 */
-	templates(cb) {
-		var handlebars = require('handlebars');
+	templates(cb, helpers) {
+		var hbs = require('handlebars');
 		var layouts = require('handlebars-layouts');
 		var fs = require('fs');
 
-		handlebars.registerHelper(layouts(handlebars));
+		hbs.registerHelper(layouts(hbs));
+
+		/**
+		 * Registering helpers
+		 */
+		if (helpers.constructor === Object && Object.keys(helpers).length > 0) {
+			for (let helperName in helpers) {
+				hbs.registerHelper(helperName, helpers[helperName].bind({hbs}));
+			}
+		}
 
 		var readTemplate = (err, data) => {
-
 			let info = Object.assign(this.data, {title: this.title});
-			let html = handlebars.compile(data)(info);
+			let html = hbs.compile(data)(info);
 			cb(html);
 		}
 
 		var readLayout = (err, data) => {
-			handlebars.registerPartial('layout', data);
+			hbs.registerPartial('layout', data);
 			fs.readFile(`${rootDir}/mvc/views/user/` +this.view+ '.hbs', 'utf8', readTemplate);
 		}
 
@@ -37,10 +45,11 @@ module.exports = class BaseController {
 	/**
 	 * Render result of html in browser
 	 */
-	render() {
-		this.templates((function(html) {
+	render(helpers) {
+		function tmHandler(html) {
 			this.res.writeHead(200, {"Content-Type": "text/html"});
 			this.res.end(html);
-		}).bind(this));
+		}
+		this.templates(tmHandler.bind(this), helpers);
 	}
 }

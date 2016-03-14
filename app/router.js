@@ -58,6 +58,13 @@ class Router {
 	}
 
 	/**
+	 * Parse url list
+	 */
+	parseUrl(url, listUrl) {
+		
+	}
+
+	/**
 	 * Initilize router module
 	 */
 	init() {

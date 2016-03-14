@@ -9,7 +9,7 @@ function serverStart(router, errorHandler) {
 		global.errorHandler = errorHandler.bind({res});
 		(new router(...arguments)).init();
 	}
-	require('http').createServer(serverHandler).listen(3333);
+	require('http').createServer(serverHandler).listen(8888);
 }
 
 module.exports = serverStart;

@@ -15,3 +15,8 @@ create table admins (
 
 insert into users(email, name, surname, birthday) value ('markus@gmail.com', 'Markus', 'Shultz', '1978-10-29');
 insert into users(email, name, surname, birthday) value ('salina@mail.biz', 'Salina', 'Irety', '1969-02-17');
+insert into users(email, name, surname, birthday) value ('filip@developer.net', 'Fox', 'Gaz', '2002-12-30');
+insert into users(email, name, surname, birthday) value ('marya@fenix.eu', 'Mary', 'Gasparyan', '1977-07-09');
+insert into users(email, name, surname, birthday) value ('samson@my-mail.ly', 'Samson', 'Denisov', '1998-11-19');
+insert into users(email, name, surname, birthday) value ('yury@job.mx', 'Yury', 'Pak', '2001-05-29');
+insert into users(email, name, surname, birthday) value ('max@about.me', 'Max', 'Thompson', '1984-12-17');
