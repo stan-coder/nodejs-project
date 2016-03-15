@@ -52,4 +52,12 @@ module.exports = class BaseController {
 		}
 		this.templates(tmHandler.bind(this), helpers);
 	}
+
+	/**
+	 * Show 404 page
+	 */
+	 page404() {
+		 let router = require(`${rootDir}/app/router`);
+		 (new router).page404.call(this);
+	 }
 }

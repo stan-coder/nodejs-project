@@ -1,3 +1,4 @@
 {
-	"/[users/page/:page]": ["user", "list"]
+	"/": ["user", "list"], 
+	"^\\/users\\/page\\/(\\d+)$": ["user", "list"]
 }

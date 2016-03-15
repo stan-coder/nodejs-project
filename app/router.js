@@ -16,7 +16,7 @@ class Router {
 	 * Prevent to answer on favicon.ico queries
 	 */
 	isFavicon() {
-		if (this.url === 'favicon.ico') {
+		if (this.url === '/favicon.ico') {
 			this.res.writeHead(200, {"Content-Type": "image/x-icon"});
 			this.res.end();
 			return true;
@@ -26,7 +26,7 @@ class Router {
 	/**
 	 * Show "Page not found"
 	 */
-	showPage404() {
+	page404() {
 		this.res.writeHead(200, {"Content-Type": "text/plain"});
 		this.res.end("Page not found");
 	}
@@ -35,16 +35,16 @@ class Router {
 	 * Response css, js files
 	 */
 	isExternalFile() {
-		
+
 		if (this.url.indexOf('/src/') === 0) {
 			let extension = this.url.substr(this.url.lastIndexOf('.') + 1, this.url.length);
-			
+
 			if (['css', 'js'].indexOf(extension) > -1) {
 
 				let fileName = this.url.substr(this.url.lastIndexOf('/') + 1);
 				require('fs').readFile(`${rootDir}/src/${fileName}`, 'utf8', (err, data) => {
 					if (err) {
-						this.showPage404();
+						this.page404();
 						return;
 					}
 
@@ -61,7 +61,7 @@ class Router {
 	 * Parse url list
 	 */
 	parseUrl(url, listUrl) {
-		
+
 	}
 
 	/**
@@ -77,11 +77,34 @@ class Router {
 		let loadlist = (err, data) => {
 			if (errorHandler(err)) return;
 
-			let list = JSON.parse(data);
-
-			if (typeof list[this.url] === "undefined") {
-				this.showPage404(this.res);
+			var list = JSON.parse(data);
+			if (this.url.search(':') > -1) {
+				this.page404();
 				return;
+			}
+
+			var urlMatch;
+			if (typeof list[this.url] === "undefined") {
+
+				/**
+				 * External regexp cheking
+				 */
+				for (let key in list) {
+					if (key.charAt(0) === '^') {
+						let re = new RegExp(key, 'g');
+						let match = re.exec(this.url);
+
+						if (Array.isArray(match) && match.length > 0) {
+							urlMatch = match;
+							this.url = key;
+							break;
+						}
+					}
+				}
+				if (urlMatch === undefined) {
+					this.page404();
+					return;
+				}
 			}
 
 			/**
@@ -93,6 +116,7 @@ class Router {
 			let action = list[this.url][1];
 			instance.view = action;
 			instance.res = this.res;
+			instance.urlMatch = urlMatch;
 			instance[action]();
 		}
 
