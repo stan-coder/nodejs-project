@@ -1,8 +1,8 @@
 create table users (
 	id int unsigned not null primary key auto_increment,
 	email varchar(30) not null,
-	name varchar(20) not null, 
-	surname varchar(20) not null, 
+	name varchar(20) not null,
+	surname varchar(20) not null,
 	birthday date not null
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=INNODB;
 
@@ -20,3 +20,10 @@ insert into users(email, name, surname, birthday) value ('marya@fenix.eu', 'Mary
 insert into users(email, name, surname, birthday) value ('samson@my-mail.ly', 'Samson', 'Denisov', '1998-11-19');
 insert into users(email, name, surname, birthday) value ('yury@job.mx', 'Yury', 'Pak', '2001-05-29');
 insert into users(email, name, surname, birthday) value ('max@about.me', 'Max', 'Thompson', '1984-12-17');
+
+insert into users(email, name, surname, birthday) value ('felix@debuggable.com', 'Felix', 'Ordovsky', '1989-03-30');
+insert into users(email, name, surname, birthday) value ('ken.woodruff@gmail.com', 'Ken', 'Woodruff', '1991-02-12');
+insert into users(email, name, surname, birthday) value ('tolga.ekmen@gmail.com', 'Tolga', 'Ekmen', '2002-10-28');
+insert into users(email, name, surname, birthday) value ('sean.monstar@gmail.com', 'Sean', 'McArthur', '1979-07-17');
+insert into users(email, name, surname, birthday) value ('dresende@thinkdigital.pt', 'Diogo', 'Resende', '1999-05-22');
+insert into users(email, name, surname, birthday) value ('natalie@lifewanted.com', 'Natalie', 'Lillich', '1994-10-01');

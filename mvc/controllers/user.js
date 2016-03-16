@@ -46,9 +46,8 @@ class User extends require(`${rootDir}/app/baseController`) {
 	 * Pagination preparation
 	 */
 	pagination(data, activePage, usersCount, cb) {
-		var pagination = '';
 		var pageCount = Math.ceil(+usersCount / +settings.usersOnPage);
-
+		
 		/**
 		 * Invalid page number
 		 */
@@ -56,12 +55,48 @@ class User extends require(`${rootDir}/app/baseController`) {
 			this.page404();
 			return;
 		}
+		this.data.pagination = this.makeNumberPages(pageCount, activePage);
 
-		for (let a = 1; a <= pageCount; a++) {
-			pagination += `<li`+ (activePage === a ? ' class="active"' : '') +`><a href="/users/page/${a}">${a}</a></li>\n`;
-		}
-		this.data.pagination = pagination;
+		var disable = ' class="disabled"';
+		this.data.prev = {class: (activePage === 1 ? disable : ''), page: (activePage === 1 ? '' : ' href="/users/page/' + (activePage - 1) + '"' )};
+		this.data.next = {class: (activePage === pageCount ? disable : ''), page: (activePage === pageCount ? '' : ' href="/users/page/' + (activePage + 1) + '"' )};
 		cb();
+	}
+
+	/**
+	 * Making proper numeber of pages
+	 */
+	makeNumberPages(pageCount, activePage) {
+		var pagination = '';
+
+		var left = (
+			activePage > 3 ?
+			[1, null, (activePage - 1), activePage] :
+			activePage
+		);
+
+		var right = (
+			activePage < (pageCount - 2) ?
+			[(activePage + 1), null, pageCount] :
+			pageCount - activePage
+		);
+
+		var pages = (
+			Array.isArray(left) ? left : Array(left).fill(1).map((el, key) => {
+		  	return ++key;
+		}));
+
+		pages = Array.prototype.concat.call([], pages,
+			(Array.isArray(right)) ? right : Array(right).fill(1).map((el, key) => {
+			  return pageCount - key;
+			}).reverse()
+		);
+
+		pages.forEach(element => {
+			let linkText = (element ? `<a href="/users/page/${element}">${element}</a>` : '<a>..</a>');
+			pagination += `<li`+ (activePage === element ? ' class="active"' : (element ? '' : ' class="disabled"')) +`>${linkText}</li>\n`;
+		});
+		return pagination;
 	}
 }
 

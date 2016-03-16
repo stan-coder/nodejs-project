@@ -2,7 +2,7 @@
     {{#content "body"}}
 
         <h2>Users</h2>
- 	
+
          {{#users}}
              <div class="panel panel-primary w420">
 					<div class="panel-heading">
@@ -18,17 +18,13 @@
 
          {{#if pagination}}
          <div class="pgDiv">
-	         <ul class="pagination pagination-lg">
-				  <li class="disabled"><a href="#">&laquo;</a></li>
-				  <!-- <li class="active"><a href="#">1</a></li>
-				  <li><a href="#">2</a></li>
-				  <li><a href="#">3</a></li> -->
-				  {{{pagination}}}
-				  
-				  <li><a href="#">&raquo;</a></li>
-				</ul>
-			</div>
+	        <ul class="pagination pagination-lg">
+				    <li{{{prev.class}}}><a{{{prev.page}}}>&laquo;</a></li>
+				     {{{pagination}}}
+				    <li{{{next.class}}}><a{{{next.page}}}>&raquo;</a></li>
+				  </ul>
+			  </div>
 			{{/if}}
 
-    {{/content}} 
+    {{/content}}
 {{/extend}}
