@@ -11,7 +11,7 @@ class UserController extends require(`${rootDir}/app/baseController`) {
 	 */
 	list() {
 
-		let ip = this.model('tools').getIp.call(this);
+		//let ip = this.model('tools').getIp.call(this);
 
 		var activePage = (this.urlMatch === undefined ? 1 : +this.urlMatch[1]);
 		if (activePage < 1) {
