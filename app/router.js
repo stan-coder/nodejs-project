@@ -116,6 +116,11 @@ class Router {
 			let action = list[this.url][1];
 			instance.view = action;
 			instance.res = this.res;
+			instance.req = this.req;
+
+			/*var bodyParser = require('body-parser');
+			console.log(bodyParser.json(this.req));*/
+
 			instance.urlMatch = urlMatch;
 			instance[action]();
 		}

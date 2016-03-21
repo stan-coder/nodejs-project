@@ -19,7 +19,7 @@ module.exports = class {
 			throw new Error('The length of parameters must be less then 90');
 		}
 
-		params.forEach((varValue) => {
+		params.forEach(varValue => {
 
 			while(1) {
 				rand = Math.random().toString().substr(2, 2);

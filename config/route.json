@@ -1,4 +1,5 @@
 {
 	"/": ["user", "list"], 
-	"^\\/users\\/page\\/(\\d+)$": ["user", "list"]
+	"^\\/users\\/page\\/(\\d+)$": ["user", "list"], 
+	"/sign_in": ["auth", "signIn"]
 }

@@ -1,0 +1,26 @@
+{{#extend "layout"}}
+	
+	{{#content "head" mode="append"}}
+		<link rel="stylesheet" href="/src/signin.css" />
+	{{/content}}
+
+	{{#content "body"}}
+
+		<form class="form-signin" method="post" action="/sign_in">
+			<h2 class="form-signin-heading">Please sign in</h2>
+
+			<label for="inputEmail" class="sr-only">Email address</label>
+			<input value="stan.coder@gmail.com" type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+			<label for="inputPassword" class="sr-only">Password</label>
+			<input value="12" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+			<div class="checkbox">
+				<label>
+					<input name="rememberMe" type="checkbox" value="true"> Remember me
+				</label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		</form>
+
+	{{/content}}
+{{/extend}}

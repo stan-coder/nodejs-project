@@ -1,6 +1,6 @@
 'use strict';
 
-class User extends require(`${rootDir}/app/baseController`) {
+class UserController extends require(`${rootDir}/app/baseController`) {
 
 	constructor() {
 		super();
@@ -10,6 +10,9 @@ class User extends require(`${rootDir}/app/baseController`) {
 	 * Listing users
 	 */
 	list() {
+
+		let ip = this.model('tools').getIp.call(this);
+
 		var activePage = (this.urlMatch === undefined ? 1 : +this.urlMatch[1]);
 		if (activePage < 1) {
 			this.page404();
@@ -17,13 +20,11 @@ class User extends require(`${rootDir}/app/baseController`) {
 		}
 		var fromRecord = (activePage - 1) * 2;
 
-		var UserModel = new require('../models/user');
-		var model = new UserModel();
-
 		/**
 		 * Retrieve users
 		 */
-		model.getList(fromRecord, (data, usersCount) => {
+		this.model().getList(fromRecord, (data, usersCount) => {
+
 			this.title = 'List of users';
 			this.data = {users: data};
 
@@ -47,7 +48,7 @@ class User extends require(`${rootDir}/app/baseController`) {
 	 */
 	pagination(data, activePage, usersCount, cb) {
 		var pageCount = Math.ceil(+usersCount / +settings.usersOnPage);
-		
+
 		/**
 		 * Invalid page number
 		 */
@@ -100,4 +101,4 @@ class User extends require(`${rootDir}/app/baseController`) {
 	}
 }
 
-module.exports = User;
+module.exports = UserController;

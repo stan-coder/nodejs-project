@@ -7,6 +7,17 @@ module.exports = class BaseController {
 	 */
 	constructor() {
 		this.layout = 'layout';
+		this.title = 'Title not specified'
+		this.data = {};
+		this.controllerName = this.constructor.name.slice(0, -10).toLowerCase();
+	}
+
+	/**
+	 * Get model instance
+	 */
+	model(name) {
+		var model = require(`${rootDir}/mvc/models/` + (name || this.controllerName));
+		return new model();
 	}
 
 	/**
@@ -22,24 +33,34 @@ module.exports = class BaseController {
 		/**
 		 * Registering helpers
 		 */
-		if (helpers.constructor === Object && Object.keys(helpers).length > 0) {
+		if (helpers !== undefined && helpers.constructor === Object && Object.keys(helpers).length > 0) {
 			for (let helperName in helpers) {
 				hbs.registerHelper(helperName, helpers[helperName].bind({hbs}));
 			}
 		}
 
+		var template = `${rootDir}/mvc/views/${this.controllerName}/${this.view}.hbs`;
+
 		var readTemplate = (err, data) => {
+			if (errorHandler(err)) return;
+
 			let info = Object.assign(this.data, {title: this.title});
 			let html = hbs.compile(data)(info);
 			cb(html);
 		}
 
-		var readLayout = (err, data) => {
-			hbs.registerPartial('layout', data);
-			fs.readFile(`${rootDir}/mvc/views/user/` +this.view+ '.hbs', 'utf8', readTemplate);
-		}
+		var readLayout = () => {
+			var layout = `${rootDir}/mvc/views/layouts/${this.layout}.hbs`;
 
-		fs.readFile(`${rootDir}/mvc/views/layouts/` +this.layout+ '.hbs', 'utf8', readLayout);
+			fs.readFile(layout, 'utf8', (err, data) => {
+				if (errorHandler(err)) return;
+				
+				hbs.registerPartial('layout', data);
+				fs.readFile(template, 'utf8', readTemplate);
+			});
+		};
+
+		this.layout ? readLayout() : fs.readFile(template, 'utf8', readTemplate);
 	}
 
 	/**
@@ -56,8 +77,31 @@ module.exports = class BaseController {
 	/**
 	 * Show 404 page
 	 */
-	 page404() {
-		 let router = require(`${rootDir}/app/router`);
-		 (new router).page404.call(this);
-	 }
+	page404() {
+		let router = require(`${rootDir}/app/router`);
+		(new router).page404.call(this);
+	}
+
+	/**
+	 * Parse post data
+	 */
+	takePost(cb) {
+		var body = '';
+
+    this.req.on('data', function (data) {
+        body += data;
+    });
+
+    this.req.on('end',function(){
+        cb(require('querystring').parse(body));
+    });
+	}
+
+	/**
+	 * Redirecto to url
+	 */
+	redirect(url) {
+		this.res.writeHead(302, {"Location": url});
+		this.res.end();
+	}
 }
