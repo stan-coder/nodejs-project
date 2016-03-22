@@ -75,7 +75,7 @@ class Router {
 		}
 
 		let loadlist = (err, data) => {
-			if (errorHandler(err)) return;
+			if (panic(err)) return;
 
 			var list = JSON.parse(data);
 			if (this.url.search(':') > -1) {
@@ -113,16 +113,13 @@ class Router {
 			let controller = require(this.cotrollersPath + list[this.url][0]);
 			let instance = new controller();
 
-			let action = list[this.url][1];
-			instance.view = action;
 			instance.res = this.res;
 			instance.req = this.req;
-
-			/*var bodyParser = require('body-parser');
-			console.log(bodyParser.json(this.req));*/
-
 			instance.urlMatch = urlMatch;
-			instance[action]();
+
+			let action = list[this.url][1];
+			let approvedAction = (this.req.method === 'POST' ? action + 'Post' : (instance.view = action));
+			instance[approvedAction]();
 		}
 
 		require('fs').readFile(this.routeListPath, 'utf8', loadlist);

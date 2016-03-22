@@ -42,7 +42,7 @@ module.exports = class BaseController {
 		var template = `${rootDir}/mvc/views/${this.controllerName}/${this.view}.hbs`;
 
 		var readTemplate = (err, data) => {
-			if (errorHandler(err)) return;
+			if (panic(err)) return;
 
 			let info = Object.assign(this.data, {title: this.title});
 			let html = hbs.compile(data)(info);
@@ -53,7 +53,7 @@ module.exports = class BaseController {
 			var layout = `${rootDir}/mvc/views/layouts/${this.layout}.hbs`;
 
 			fs.readFile(layout, 'utf8', (err, data) => {
-				if (errorHandler(err)) return;
+				if (panic(err)) return;
 				
 				hbs.registerPartial('layout', data);
 				fs.readFile(template, 'utf8', readTemplate);

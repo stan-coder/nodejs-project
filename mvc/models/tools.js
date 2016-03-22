@@ -27,6 +27,13 @@ class ToolsModel {
       this.req.connection.remoteAddress
     )
   }
+
+  /**
+   * Make sha256 hash
+   */
+  static sha256(value) {
+  	return require('crypto').createHmac('sha256', value).update(settings.unipid).digest('hex').toUpperCase();
+  }
 }
 
 module.exports = ToolsModel;

@@ -69,7 +69,7 @@ module.exports = class {
 		connection.query(query, function(err, result, fields) {
 			
 			function connFinish() {
-				if (errorHandler(err)) return;
+				if (panic(err)) return;
 				let out = (params.length > 0 ? result[result.length - 1] : result);
 				cb(out);
 			}

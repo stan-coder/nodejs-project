@@ -3,7 +3,7 @@
 /**
  * Errors handler
  */
-function errorHandler(err) {
+function panic(err) {
 	if (err) {
 		var mess;
 		if (settings.mode === 'development') {
@@ -29,5 +29,5 @@ module.exports.loadSettings = function (err, data) {
 	global.settings = JSON.parse(data);
 
 	let router = require(`${rootDir}/app/router`);
-	require(`${rootDir}/app/server`)(router, errorHandler);
+	require(`${rootDir}/app/server`)(router, panic);
 }
