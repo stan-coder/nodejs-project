@@ -15,7 +15,7 @@ class ToolsModel {
 			s += String.fromCharCode(33 + +r); // from: 33, to: 127
 		}
 
-		return s;
+		return (new Buffer(s)).toString('base64').substr(0, size);
 	}
 
   /**

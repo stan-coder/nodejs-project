@@ -67,11 +67,14 @@ module.exports = class BaseController {
 	 * Render result of html in browser
 	 */
 	render(helpers) {
-		function tmHandler(html) {
-			this.res.writeHead(200, {"Content-Type": "text/html"});
-			this.res.end(html);
-		}
-		this.templates(tmHandler.bind(this), helpers);
+		var next = () => {
+			this.templates((html) => {
+				this.res.writeHead(200, {'Content-Type': 'text/html'});
+				this.res.end(html);
+			}, helpers);
+		};
+
+		(this.checkFlash === true) ? this.getFlash((mes) => {this.data.flashMessage = mes; next();}) : next();
 	}
 
 	/**
@@ -83,25 +86,26 @@ module.exports = class BaseController {
 	}
 
 	/**
-	 * Parse post data
-	 */
-	takePost(cb) {
-		var body = '';
-
-    this.req.on('data', function (data) {
-        body += data;
-    });
-
-    this.req.on('end',function(){
-        cb(require('querystring').parse(body));
-    });
-	}
-
-	/**
 	 * Redirecto to url
 	 */
 	redirect(url) {
-		this.res.writeHead(302, {"Location": url});
+		this.res.writeHead(302, {'Location': url});
 		this.res.end();
+	}
+
+	/**
+	 * Set Flash message
+	 */
+	setFlash(message, cb) {
+		var session = require('./sessions');
+		(new session(this.req, this.res)).set({flashMessage: message}, cb || () => {});
+	}
+
+	/**
+	 * Check Flash message
+	 */
+	getFlash(cb) {
+		var session = require('./sessions');
+		(new session(this.req, this.res)).getAndUnset('flashMessage', cb);
 	}
 }

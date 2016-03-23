@@ -17,7 +17,7 @@ class Router {
 	 */
 	isFavicon() {
 		if (this.url === '/favicon.ico') {
-			this.res.writeHead(200, {"Content-Type": "image/x-icon"});
+			this.res.writeHead(200, {'Content-Type': 'image/x-icon'});
 			this.res.end();
 			return true;
 		}
@@ -27,8 +27,8 @@ class Router {
 	 * Show "Page not found"
 	 */
 	page404() {
-		this.res.writeHead(200, {"Content-Type": "text/plain"});
-		this.res.end("Page not found");
+		this.res.writeHead(200, {'Content-Type': 'text/plain'});
+		this.res.end('Page not found');
 	}
 
 	/**
@@ -55,13 +55,6 @@ class Router {
 				return true;
 			}
 		}
-	}
-
-	/**
-	 * Parse url list
-	 */
-	parseUrl(url, listUrl) {
-
 	}
 
 	/**
@@ -118,11 +111,25 @@ class Router {
 			instance.urlMatch = urlMatch;
 
 			let action = list[this.url][1];
-			let approvedAction = (this.req.method === 'POST' ? action + 'Post' : (instance.view = action));
-			instance[approvedAction]();
+			this.req.method === 'POST' ? this.takePost((data) => {instance[action + 'Post'](data);}) : instance[instance.view = action]();
 		}
 
 		require('fs').readFile(this.routeListPath, 'utf8', loadlist);
+	}
+
+	/**
+	 * Parse post data
+	 */
+	takePost(cb) {
+		var body = '';
+
+    this.req.on('data', function (data) {
+        body += data;
+    });
+
+    this.req.on('end',function(){
+        cb(require('querystring').parse(body));
+    });
 	}
 }
 

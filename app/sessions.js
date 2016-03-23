@@ -44,7 +44,7 @@ class Sessions {
   /**
    * Create cookie and write "sid" into mongoDB
    */
-  initSession(cb) {
+  init(cb) {
     var rs;
     var sh;
     var sid;
@@ -107,13 +107,6 @@ class Sessions {
           cb();
         });
       });
-
-
-      this.mongoQuery('update', {sid: this.sid}, {$set: data}, result => {
-
-        cb();
-        console.log(result);        
-      });
     };
 
     var checkSidBySh = () => {
@@ -128,7 +121,7 @@ class Sessions {
       });
     };
 
-    sh === undefined ? this.initSession(doSet) : checkSidBySh();
+    sh === undefined ? this.init(doSet) : checkSidBySh();
   }
 
   /**
@@ -141,7 +134,60 @@ class Sessions {
   /**
    * Get value
    */
-  get(field) {}
+  get(field, cb) {
+    var sh = this.cookies.get('sh');
+    if (sh === undefined) {
+      cb();
+      return;
+    }
+
+    var sid = this.getSidBySh(sh);
+    this.mongoQuery('findOne', {sid}, result => {
+      if (result === null) {
+        cb();
+        return;
+      }
+      cb(result);
+    });
+  }
+
+  /**
+   * Remove existing field
+   */
+  getAndUnset(unsetField, cb) {
+
+    var sh = this.cookies.get('sh');
+    if (sh === undefined) {
+      cb();
+      return;
+    }
+
+    this.connect((db) => {
+      db.collection('sessions').findAndModify(
+        
+        {sid: this.getSidBySh(sh)},
+        [],
+        {$unset: Object.defineProperty({}, unsetField, {value: '', enumerable: true})},
+
+        (err, doc) => {
+          db.close();
+          if (panic(err)) return;
+
+          var result = (
+            doc !== undefined && 
+            doc.constructor === Object && 
+            doc.ok === 1 &&
+            doc.value.hasOwnProperty(unsetField) ? doc.value[unsetField] : null
+          );
+          cb(result);
+        }
+
+      );
+    });
+  
+  }
+
 }
+
 
 module.exports = Sessions;
