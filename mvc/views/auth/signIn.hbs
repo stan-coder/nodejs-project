@@ -8,8 +8,8 @@
 
 		{{#if flashMessage}}
 		<div class="alert alert-dismissible alert-danger warning">
-		  <button type="button" class="close" data-dismiss="alert">&times;</button>
-		  {{flashMessage}}
+		  <button type="button" class="close" data-dismiss="alert" onclick="document.getElementsByClassName('alert-danger')[0].style.display = 'none';">&times;</button>
+		  {{{flashMessage}}}
 		</div>
 		{{/if}}
 
@@ -17,9 +17,14 @@
 			<h2 class="form-signin-heading">Please sign in</h2>
 
 			<label for="inputEmail" class="sr-only">Email address</label>
-			<input maxlength="30" value="stan.coder@gmail.com" type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+			<!-- <input maxlength="30" value="stan.coder@gmail.com" type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus> -->
+			<input maxlength="30" value="stan.coder@gmail.com" type="text" name="email" id="inputEmail" class="form-control" placeholder="Email address" autofocus>
 			<label for="inputPassword" class="sr-only">Password</label>
 			<input maxlength="100" value="12" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+			<label for="inputPasswordConfirm" class="sr-only">Password</label>
+			<input maxlength="100" value="122313123" type="password" name="passwordConfirm" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirm" required>
+
 			<input value="{{csrfToken}}" name="csrfToken" type="hidden">
 
 			<div class="checkbox">
